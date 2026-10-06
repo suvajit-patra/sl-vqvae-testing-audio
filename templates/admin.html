@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Voice Recording Admin</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+    <script>
+        window.APP_ROOT = "{{ url_for('index').rstrip('/') }}";
+    </script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: #121212;
+            color: #f5f5f5;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .dashboard-container {
+            width: min(100%, 1100px);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .header-card, .control-card, .panel-card {
+            background: #1e1e1e;
+            border: 1px solid #2d2d2d;
+            border-radius: 10px;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.18);
+        }
+        .header-card {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-card h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        .logout-btn {
+            text-decoration: none;
+            color: #ef4444;
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.35);
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-weight: 700;
+        }
+        .control-card {
+            padding: 14px 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+        #next-row {
+            height: 50px;
+            flex: 2;
+        }
+        #rerecord-btn {
+            height: 50px;
+            flex: 1;
+        }
+        #admin-index {
+            width: 110px;
+            background: #2a2a2a;
+            color: #facc15;
+            border: 1px solid #3a3a3a;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            text-align: center;
+        }
+        button {
+            background: #2a2a2a;
+            color: white;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 10px 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+        button:hover { background: #3a3a3a; }
+        button:active { transform: scale(0.98); }
+        #get-row { background: #1d4ed8; border-color: #1d4ed8; }
+        #next-row { background: #2563eb; border-color: #2563eb; }
+        #rerecord-btn { background: #b91c1c; border-color: #b91c1c; }
+        #admin-status {
+            margin-left: auto;
+            color: #facc15;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .panel-card {
+            padding: 18px;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 18px;
+        }
+        .text-box {
+            background: #151515;
+            border: 1px solid #2d2d2d;
+            border-radius: 8px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .label {
+            color: #9ca3af;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        #admin-text {
+            font-size: 1.2rem;
+            line-height: 1.5;
+            color: white;
+            min-height: 80px;
+        }
+        .audio-box {
+            background: #151515;
+            border: 1px solid #2d2d2d;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .audio-box audio {
+            width: 100%;
+            margin-top: 8px;
+        }
+        .hidden { display: none !important; }
+        #admin-error {
+            color: #f87171;
+            min-height: 20px;
+            font-weight: 700;
+        }
+        @media (max-width: 760px) {
+            .panel-card { grid-template-columns: 1fr; }
+            .control-card { justify-content: flex-start; }
+            #admin-status { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header-card">
+            <h1>Voice Recording Controller</h1>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+        </div>
+
+        <div class="control-card">
+            <input id="admin-index" type="text" value="0" aria-label="Index">
+            <button id="get-row">Get Row</button>
+            <div id="admin-status">Waiting for row...</div>
+        </div>
+
+        <div class="panel-card">
+            <div class="text-box">
+                <div class="label">Prompt Text</div>
+                <div id="admin-text">Loading...</div>
+            </div>
+
+            <div class="audio-box">
+                <div class="label">Audio Preview</div>
+                <div id="admin-error"></div>
+                <audio id="admin-audio" controls class="hidden"></audio>
+                <button id="play-existing">Play Existing Audio</button>
+            </div>
+        </div>
+
+        <div class="control-card" id="main-controls">
+            <button id="rerecord-btn">Rerecord</button>
+            <button id="next-row">Next</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin_main.js') }}"></script>
+</body>
+</html>
