@@ -24,7 +24,7 @@ function updateAudioPreview(audioUrl) {
     if (adminAudio) {
         adminAudio.pause();
         adminAudio.currentTime = 0;
-        adminAudio.src = audioUrl || '';
+        adminAudio.src = window.APP_ROOT+audioUrl || '';
         adminAudio.load();
     }
 

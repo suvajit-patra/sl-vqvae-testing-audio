@@ -324,4 +324,5 @@ def handle_viewer_recording_error(data):
 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=False, port=5001, host='0.0.0.0', log_output=False)
+    # socketio.run(app, debug=False, port=5002, host="0.0.0.0", log_output=False, keyfile="server.key", certfile="server.crt")
+    socketio.run(app, debug=False, port=5002, host='0.0.0.0', log_output=False)

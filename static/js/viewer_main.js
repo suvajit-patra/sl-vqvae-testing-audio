@@ -41,7 +41,7 @@ function applyAudioSource(audioElement, url) {
     if (!audioElement) return;
     audioElement.pause();
     audioElement.currentTime = 0;
-    audioElement.src = url || '';
+    audioElement.src = window.APP_ROOT+url || '';
     audioElement.load();
     audioElement.style.display = url ? 'block' : 'none';
 }
